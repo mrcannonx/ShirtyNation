@@ -107,9 +107,18 @@ export function ProductDetail({ product }: { product: Product }) {
         </div>
 
         {product.description && (
-          <p className="text-[#A3A3A3] text-sm leading-relaxed mt-5">
-            {product.description}
-          </p>
+          <div className="text-[#A3A3A3] text-sm leading-relaxed mt-5 space-y-2">
+            {product.description.split("\n").map((line, i) => {
+              if (!line.trim()) return null;
+              if (line.startsWith("•")) {
+                return <p key={i} className="pl-2">{line}</p>;
+              }
+              if (line === line.toUpperCase() && line.length > 3 && line.includes(":")) {
+                return <p key={i} className="text-white font-semibold mt-3">{line}</p>;
+              }
+              return <p key={i}>{line}</p>;
+            })}
+          </div>
         )}
 
         {/* Size Selector */}
