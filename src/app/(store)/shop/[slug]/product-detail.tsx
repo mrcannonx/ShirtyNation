@@ -41,7 +41,7 @@ export function ProductDetail({ product }: { product: Product }) {
           {images[selectedImage] ? (
             <Image
               src={images[selectedImage]}
-              alt={product.name}
+              alt={`${product.name} - ${product.category} t-shirt by ShirtyNation`}
               width={800}
               height={800}
               className="w-full h-auto object-contain"
@@ -67,6 +67,7 @@ export function ProductDetail({ product }: { product: Product }) {
               <button
                 key={i}
                 onClick={() => setSelectedImage(i)}
+                aria-label={`View image ${i + 1} of ${product.name}`}
                 className={`relative h-20 w-20 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-colors ${
                   selectedImage === i
                     ? "border-[#E8630A]"
@@ -75,10 +76,11 @@ export function ProductDetail({ product }: { product: Product }) {
               >
                 <Image
                   src={img}
-                  alt={`${product.name} ${i + 1}`}
+                  alt={`${product.name} - view ${i + 1}`}
                   fill
                   className="object-cover"
                   sizes="80px"
+                  loading="lazy"
                 />
               </button>
             ))}
@@ -124,6 +126,8 @@ export function ProductDetail({ product }: { product: Product }) {
                     setSelectedSize(size);
                     setSizeError(false);
                   }}
+                  aria-label={`Select size ${size}`}
+                  aria-pressed={selectedSize === size}
                   className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                     selectedSize === size
                       ? "bg-[#E8630A] border-[#E8630A] text-white"
@@ -148,6 +152,8 @@ export function ProductDetail({ product }: { product: Product }) {
                 <button
                   key={color}
                   onClick={() => setSelectedColor(color)}
+                  aria-label={`Select color ${color}`}
+                  aria-pressed={selectedColor === color}
                   className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                     selectedColor === color
                       ? "bg-[#E8630A] border-[#E8630A] text-white"
@@ -184,6 +190,7 @@ export function ProductDetail({ product }: { product: Product }) {
 
           <button
             onClick={() => toggleItem(product)}
+            aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
             className={`p-3 rounded-lg border transition-colors ${
               wishlisted
                 ? "border-[#E8630A]/30 bg-[#E8630A]/10 text-[#E8630A]"

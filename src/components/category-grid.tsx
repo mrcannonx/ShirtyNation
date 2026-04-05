@@ -26,10 +26,13 @@ export function CategoryGrid({ categories }: { categories?: Category[] }) {
       {items.map((cat) => (
         <Link
           key={cat.slug}
-          href={`/shop?category=${cat.slug}`}
+          href={`/category/${cat.slug}`}
           className="group relative bg-[#141414] rounded-xl p-5 text-center hover:bg-[#1C1C1C] transition-all border border-[#262626] hover:border-[#E8630A]/30"
+          aria-label={`Browse ${cat.name} shirts`}
         >
-          <span className="text-2xl block mb-2">{cat.icon}</span>
+          <span className="text-2xl block mb-2" role="img" aria-hidden="true">
+            {cat.icon}
+          </span>
           <span className="text-sm font-semibold text-[#A3A3A3] group-hover:text-white transition-colors">
             {cat.name}
           </span>

@@ -20,10 +20,11 @@ export function ProductCard({ product }: { product: Product }) {
           {mockupImage ? (
             <Image
               src={mockupImage}
-              alt={product.name}
+              alt={`${product.name} - ${product.category} t-shirt`}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              loading="lazy"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-[#404040]">
@@ -46,6 +47,7 @@ export function ProductCard({ product }: { product: Product }) {
           toggleItem(product);
         }}
         className="absolute top-2 right-2 p-1.5 bg-[#0A0A0A]/70 backdrop-blur-sm rounded-full hover:bg-[#0A0A0A] transition-colors z-10"
+        aria-label={wishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
       >
         <Heart
           className={`h-4 w-4 transition-colors ${

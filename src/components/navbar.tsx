@@ -10,11 +10,11 @@ import { Button } from "./ui/button";
 
 const NAV_CATEGORIES = [
   { name: "Shop All", href: "/shop" },
-  { name: "Funny", href: "/shop?category=funny" },
-  { name: "Motivational", href: "/shop?category=motivational" },
-  { name: "Vintage", href: "/shop?category=vintage" },
-  { name: "Gaming", href: "/shop?category=gaming" },
-  { name: "Trending", href: "/shop?category=trending" },
+  { name: "Funny", href: "/category/funny" },
+  { name: "Motivational", href: "/category/motivational" },
+  { name: "Vintage", href: "/category/vintage" },
+  { name: "Gaming", href: "/category/gaming" },
+  { name: "Trending", href: "/category/trending" },
 ];
 
 export function Navbar() {
@@ -49,12 +49,14 @@ export function Navbar() {
               <Link
                 href="/search"
                 className="relative p-2 hover:bg-[#1C1C1C] rounded-full transition-colors"
+                aria-label="Search shirts"
               >
                 <Search className="h-5 w-5 text-[#A3A3A3]" />
               </Link>
               <Link
                 href="/wishlist"
                 className="relative p-2 hover:bg-[#1C1C1C] rounded-full transition-colors"
+                aria-label="Wishlist"
               >
                 <Heart className="h-5 w-5 text-[#A3A3A3]" />
                 {wishlistCount > 0 && (
@@ -66,6 +68,7 @@ export function Navbar() {
               <button
                 onClick={() => setIsOpen(true)}
                 className="relative p-2 hover:bg-[#1C1C1C] rounded-full transition-colors"
+                aria-label={`Shopping cart${totalItems > 0 ? `, ${totalItems} items` : ""}`}
               >
                 <ShoppingBag className="h-5 w-5 text-[#A3A3A3]" />
                 {totalItems > 0 && (

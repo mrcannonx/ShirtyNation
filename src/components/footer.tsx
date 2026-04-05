@@ -2,12 +2,16 @@ import Link from "next/link";
 import { NewsletterForm } from "./newsletter-form";
 
 const CATEGORIES = [
-  { name: "Funny", href: "/shop?category=funny" },
-  { name: "Motivational", href: "/shop?category=motivational" },
-  { name: "Vintage", href: "/shop?category=vintage" },
-  { name: "Gaming", href: "/shop?category=gaming" },
-  { name: "Dad Jokes", href: "/shop?category=dad-jokes" },
-  { name: "Coding", href: "/shop?category=coding" },
+  { name: "Funny Shirts", href: "/category/funny" },
+  { name: "Motivational Shirts", href: "/category/motivational" },
+  { name: "Vintage Shirts", href: "/category/vintage" },
+  { name: "Gaming Shirts", href: "/category/gaming" },
+  { name: "Dad Joke Shirts", href: "/category/dad-jokes" },
+  { name: "Coding Shirts", href: "/category/coding" },
+  { name: "Animal Shirts", href: "/category/animals" },
+  { name: "Music Shirts", href: "/category/music" },
+  { name: "Sports Shirts", href: "/category/sports" },
+  { name: "Trending Shirts", href: "/category/trending" },
 ];
 
 export function Footer() {
@@ -16,9 +20,11 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <span className="text-lg font-black text-white tracking-tight">
-              SHIRTY<span className="text-[#E8630A]">NATION</span>
-            </span>
+            <Link href="/" aria-label="ShirtyNation home">
+              <span className="text-lg font-black text-white tracking-tight">
+                SHIRTY<span className="text-[#E8630A]">NATION</span>
+              </span>
+            </Link>
             <p className="mt-3 text-sm leading-relaxed text-[#737373]">
               The largest selection of shirts in every niche.
               Premium quality, designed with AI, shipped to your door.
@@ -46,6 +52,7 @@ export function Footer() {
             </h3>
             <ul className="space-y-2 text-sm">
               <li><Link href="/shop" className="text-[#737373] hover:text-white transition-colors">All Shirts</Link></li>
+              <li><Link href="/search" className="text-[#737373] hover:text-white transition-colors">Search</Link></li>
               <li><Link href="/wishlist" className="text-[#737373] hover:text-white transition-colors">Wishlist</Link></li>
               <li><Link href="/cart" className="text-[#737373] hover:text-white transition-colors">Cart</Link></li>
             </ul>

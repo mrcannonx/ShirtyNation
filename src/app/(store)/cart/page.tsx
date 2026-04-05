@@ -9,7 +9,6 @@ import { formatPrice } from "@/lib/utils";
 import { getShippingCost, amountUntilFreeShipping, FREE_SHIPPING_THRESHOLD } from "@/lib/shipping";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-
 export default function CartPage() {
   const { items, removeItem, updateQuantity, totalPrice } = useCart();
   const [loading, setLoading] = useState(false);
@@ -122,9 +121,11 @@ export default function CartPage() {
                 {img ? (
                   <Image
                     src={img}
-                    alt={item.product.name}
+                    alt={`${item.product.name} - ${item.size} / ${item.color}`}
                     fill
                     className="object-cover"
+                    sizes="96px"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-[#404040] text-2xl">
@@ -154,13 +155,15 @@ export default function CartPage() {
                       onClick={() => updateQuantity(key, item.quantity - 1)}
                       disabled={item.quantity <= 1}
                       className="p-0.5 text-[#737373] hover:text-white disabled:opacity-30"
+                      aria-label={`Decrease quantity of ${item.product.name}`}
                     >
                       <Minus className="h-3.5 w-3.5" />
                     </button>
-                    <span className="text-sm text-white w-4 text-center">{item.quantity}</span>
+                    <span className="text-sm text-white w-4 text-center" aria-label={`Quantity: ${item.quantity}`}>{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(key, item.quantity + 1)}
                       className="p-0.5 text-[#737373] hover:text-white"
+                      aria-label={`Increase quantity of ${item.product.name}`}
                     >
                       <Plus className="h-3.5 w-3.5" />
                     </button>
@@ -168,6 +171,7 @@ export default function CartPage() {
                   <button
                     onClick={() => removeItem(key)}
                     className="p-2 text-[#525252] hover:text-red-400 transition-colors"
+                    aria-label={`Remove ${item.product.name} from cart`}
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

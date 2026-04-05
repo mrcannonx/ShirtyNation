@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { Hero } from "@/components/hero";
 import { CategoryGrid } from "@/components/category-grid";
@@ -7,6 +8,21 @@ import { NewsletterForm } from "@/components/newsletter-form";
 import { createClient } from "@/lib/supabase/server";
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "ShirtyNation — The Largest Selection of Shirts in Every Niche",
+  description:
+    "Shop thousands of unique shirt designs across every niche. Funny, motivational, vintage, gaming, dad jokes, coding and more. Premium quality tees shipped to your door.",
+  openGraph: {
+    title: "ShirtyNation — The Largest Selection of Shirts in Every Niche",
+    description:
+      "Shop thousands of unique shirt designs across every niche. Premium quality tees shipped to your door.",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/",
+  },
+};
 
 async function getFeaturedProducts() {
   const supabase = await createClient();
@@ -87,19 +103,19 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <p className="text-2xl font-bold text-white">Every Niche</p>
+              <h3 className="text-2xl font-bold text-white">Every Niche</h3>
               <p className="text-sm text-[#737373] mt-1">
                 Thousands of designs from funny to motivational to vintage
               </p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">Premium Quality</p>
+              <h3 className="text-2xl font-bold text-white">Premium Quality</h3>
               <p className="text-sm text-[#737373] mt-1">
                 Bella+Canvas & Comfort Colors blanks. Soft. Durable.
               </p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">Fast Shipping</p>
+              <h3 className="text-2xl font-bold text-white">Fast Shipping</h3>
               <p className="text-sm text-[#737373] mt-1">
                 Printed & shipped within 3-5 business days
               </p>
