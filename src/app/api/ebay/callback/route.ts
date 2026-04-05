@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
   if (!code) {
     return NextResponse.json(
-      { error: "No authorization code received from eBay" },
+      { error: "No authorization code received from eBay", raw_url: request.url },
       { status: 400 }
     );
   }

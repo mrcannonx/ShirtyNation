@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "images.printify.com",
+      },
+      {
+        protocol: "https",
         hostname: "pfy-prod-image-storage.s3.us-east-2.amazonaws.com",
       },
       {

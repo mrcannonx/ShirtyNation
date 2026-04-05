@@ -289,7 +289,7 @@ async function createPrintifyProduct(imageId, title, colors, seoTitle, seoDescri
   const mockups = [];
   const seenColors = new Set();
   for (const img of result.images || []) {
-    if (img.src && img.src.includes("front-2")) {
+    if (img.src && img.src.includes("102044")) {
       const vids = img.variant_ids || [];
       // Check which color this mockup belongs to
       for (const color of colors) {
@@ -411,7 +411,27 @@ async function main() {
     // Step 3: Save to Supabase with SEO content
     await saveToSupabase(slug, title, category, colors, PRICE_STANDARD / 100, mockups, productId, upload.preview_url, seoTitle, seoDescription, seoTags);
 
-    // Step 4: Move to processed
+    // Step 4: Publish to eBay via Printify
+    console.log("  🛍️  Publishing to eBay...");
+    try {
+      await apiRequest(
+        `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products/${productId}/publish.json`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${PRINTIFY_TOKEN}`,
+            "Content-Type": "application/json",
+            "User-Agent": "ShirtyNation/1.0",
+          },
+        },
+        JSON.stringify({ title: true, description: true, images: true, variants: true, tags: true, keyFeatures: true, shipping_template: true })
+      );
+      console.log("  ✅ Published to eBay");
+    } catch (ebayErr) {
+      console.log(`  ⚠️  eBay publish failed (non-blocking): ${ebayErr.message.slice(0, 100)}`);
+    }
+
+    // Step 5: Move to processed
     const processedDir = path.join(path.dirname(filepath), "processed");
     if (fs.existsSync(processedDir)) {
       const dest = path.join(processedDir, path.basename(filepath));

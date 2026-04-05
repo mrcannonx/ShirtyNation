@@ -1,23 +1,45 @@
 import { NextResponse } from "next/server";
-import { getAuthUrl } from "@/lib/ebay";
 
 /**
  * GET /api/ebay/auth
  *
- * One-time OAuth flow. Redirects to eBay consent page.
- * After user grants access, eBay redirects to /api/ebay/callback
+ * Redirects to eBay OAuth consent page using the pre-built OAuth URL
+ * from eBay Developer Portal with all scopes included.
  */
 export async function GET() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const callbackUrl = `${appUrl}/api/ebay/callback`;
+  const clientId = process.env.EBAY_CLIENT_ID;
+  const ruName = process.env.EBAY_RU_NAME;
 
-  try {
-    const authUrl = getAuthUrl(callbackUrl);
-    return NextResponse.redirect(authUrl);
-  } catch (error) {
+  if (!clientId || !ruName) {
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: "EBAY_CLIENT_ID and EBAY_RU_NAME are required" },
       { status: 500 }
     );
   }
+
+  const scopes = [
+    "https://api.ebay.com/oauth/api_scope",
+    "https://api.ebay.com/oauth/api_scope/sell.marketing.readonly",
+    "https://api.ebay.com/oauth/api_scope/sell.marketing",
+    "https://api.ebay.com/oauth/api_scope/sell.inventory.readonly",
+    "https://api.ebay.com/oauth/api_scope/sell.inventory",
+    "https://api.ebay.com/oauth/api_scope/sell.account.readonly",
+    "https://api.ebay.com/oauth/api_scope/sell.account",
+    "https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly",
+    "https://api.ebay.com/oauth/api_scope/sell.fulfillment",
+    "https://api.ebay.com/oauth/api_scope/sell.analytics.readonly",
+    "https://api.ebay.com/oauth/api_scope/sell.finances",
+    "https://api.ebay.com/oauth/api_scope/sell.payment.dispute",
+    "https://api.ebay.com/oauth/api_scope/commerce.identity.readonly",
+    "https://api.ebay.com/oauth/api_scope/sell.reputation",
+    "https://api.ebay.com/oauth/api_scope/sell.reputation.readonly",
+    "https://api.ebay.com/oauth/api_scope/commerce.notification.subscription",
+    "https://api.ebay.com/oauth/api_scope/commerce.notification.subscription.readonly",
+    "https://api.ebay.com/oauth/api_scope/sell.stores",
+    "https://api.ebay.com/oauth/api_scope/sell.stores.readonly",
+  ].join(" ");
+
+  const authUrl = `https://auth.ebay.com/oauth2/authorize?client_id=${encodeURIComponent(clientId)}&response_type=code&redirect_uri=${encodeURIComponent(ruName)}&scope=${encodeURIComponent(scopes)}`;
+
+  return NextResponse.redirect(authUrl);
 }
