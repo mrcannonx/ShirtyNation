@@ -7,6 +7,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.supabase.co",
       },
+      {
+        protocol: "https",
+        hostname: "images-api.printify.com",
+      },
+      {
+        protocol: "https",
+        hostname: "pfy-prod-image-storage.s3.us-east-2.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
     ],
   },
 };
