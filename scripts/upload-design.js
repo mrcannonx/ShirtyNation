@@ -30,11 +30,27 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const BLUEPRINT_ID = 12; // Bella Canvas 3001 Unisex Jersey
 const PRINT_PROVIDER_ID = 29; // Monster Digital
 
-// Variant IDs for Bella Canvas 3001 via Monster Digital
+// Variant IDs for Bella Canvas 3001 via Monster Digital — 19 colors
 const VARIANT_MAP = {
-  white:   { S: 18540, M: 18541, L: 18542, XL: 18543, "2XL": 18544, "3XL": 18545 },
-  black:   { S: 18100, M: 18101, L: 18102, XL: 18103, "2XL": 18104, "3XL": 18105 },
-  navy:    { S: 18396, M: 18397, L: 18398, XL: 18399, "2XL": 18400, "3XL": 18401 },
+  black:             { S: 18100, M: 18101, L: 18102, XL: 18103, "2XL": 18104, "3XL": 18105 },
+  white:             { S: 18540, M: 18541, L: 18542, XL: 18543, "2XL": 18544, "3XL": 18545 },
+  navy:              { S: 18396, M: 18397, L: 18398, XL: 18399, "2XL": 18400, "3XL": 18401 },
+  red:               { S: 18444, M: 18445, L: 18446, XL: 18447, "2XL": 18448, "3XL": 18449 },
+  forest:            { S: 18180, M: 18181, L: 18182, XL: 18183, "2XL": 18184, "3XL": 18185 },
+  maroon:            { S: 18372, M: 18373, L: 18374, XL: 18375, "2XL": 18376, "3XL": 18377 },
+  "dark-grey":       { S: 18140, M: 18141, L: 18142, XL: 18143, "2XL": 18144, "3XL": 18145 },
+  "true-royal":      { S: 18516, M: 18517, L: 18518, XL: 18519, "2XL": 18520, "3XL": 18521 },
+  gold:              { S: 18188, M: 18189, L: 18190, XL: 18191, "2XL": 18192, "3XL": 18193 },
+  army:              { S: 18060, M: 18061, L: 18062, XL: 18063, "2XL": 18064, "3XL": 18065 },
+  orange:            { S: 18420, M: 18421, L: 18422, XL: 18423, "2XL": 18424, "3XL": 18425 },
+  "athletic-heather":{ S: 18076, M: 18077, L: 18078, XL: 18079, "2XL": 18080, "3XL": 18081 },
+  "soft-cream":      { S: 18460, M: 18461, L: 18462, XL: 18463, "2XL": 18464, "3XL": 18465 },
+  "light-blue":      { S: 18356, M: 18357, L: 18358, XL: 18359, "2XL": 18360, "3XL": 18361 },
+  pink:              { S: 18436, M: 18437, L: 18438, XL: 18439, "2XL": 18440, "3XL": 18441 },
+  kelly:             { S: 18340, M: 18341, L: 18342, XL: 18343, "2XL": 18344, "3XL": 18345 },
+  silver:            { S: 18452, M: 18453, L: 18454, XL: 18455, "2XL": 18456, "3XL": 18457 },
+  brown:             { S: 39577, M: 39580, L: 39583, XL: 39586, "2XL": 39589, "3XL": 39592 },
+  "heather-navy":    { S: 18268, M: 18269, L: 18270, XL: 18271, "2XL": 18272, "3XL": 18273 },
 };
 
 const SIZES = ["S", "M", "L", "XL", "2XL", "3XL"];
