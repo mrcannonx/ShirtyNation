@@ -92,17 +92,34 @@ export async function GET() {
           continue;
         }
 
-        // Extract updated mockup URLs
+        // Extract updated data from Printify
         const mockups = extractMockups(pp);
 
-        // Sync: update mockups and description from Printify
-        // Preserve: slug, category, colors, sizes, price, status (managed by us)
+        // Get price from first enabled variant (in cents → dollars)
+        const enabledVariant = pp.variants?.find((v) => v.is_enabled);
+        const price = enabledVariant ? enabledVariant.price / 100 : undefined;
+
+        // Get enabled colors and sizes
+        const enabledVariants = (pp.variants || []).filter((v) => v.is_enabled);
+        const colors = [...new Set(enabledVariants.map((v) => v.options?.color).filter(Boolean))];
+        const sizes = [...new Set(enabledVariants.map((v) => v.options?.size).filter(Boolean))];
+
+        // Build update object — sync everything from Printify
+        const updateData: Record<string, unknown> = {
+          name: pp.title,
+          description: pp.description,
+          mockup_urls: mockups,
+          tags: pp.tags || [],
+          updated_at: new Date().toISOString(),
+        };
+
+        if (price) updateData.price = price;
+        if (colors.length > 0) updateData.colors = colors;
+        if (sizes.length > 0) updateData.sizes = sizes;
+
         const { error: updateError } = await supabase
           .from("products")
-          .update({
-            mockup_urls: mockups,
-            updated_at: new Date().toISOString(),
-          })
+          .update(updateData)
           .eq("id", existing.id);
 
         if (updateError) {
