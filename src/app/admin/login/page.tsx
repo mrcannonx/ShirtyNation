@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-black tracking-tight text-white">
-            SHIRTY<span className="text-[#E8630A]">NATION</span>
+            AUDACITY<span className="text-[#E8630A]">TEES</span>
           </h1>
           <p className="text-sm text-[#737373] mt-1">Admin Login</p>
         </div>

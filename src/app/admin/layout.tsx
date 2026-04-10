@@ -70,7 +70,7 @@ export default function AdminLayout({
       {/* Mobile header */}
       <div className="lg:hidden sticky top-0 z-50 bg-[#0A0A0A] border-b border-[#262626] px-4 py-3 flex items-center justify-between">
         <span className="text-lg font-black tracking-tight">
-          SHIRTY<span className="text-[#E8630A]">NATION</span>
+          AUDACITY<span className="text-[#E8630A]">TEES</span>
           <span className="text-xs text-[#525252] ml-2">Admin</span>
         </span>
         <Button
@@ -92,7 +92,7 @@ export default function AdminLayout({
         >
           <div className="p-5 border-b border-[#262626]">
             <Link href="/" className="text-lg font-black tracking-tight text-white">
-              SHIRTY<span className="text-[#E8630A]">NATION</span>
+              AUDACITY<span className="text-[#E8630A]">TEES</span>
             </Link>
             <p className="text-xs text-[#525252] mt-0.5">Admin Panel</p>
           </div>

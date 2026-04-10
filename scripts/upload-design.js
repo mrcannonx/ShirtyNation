@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
- * ShirtyNation — Automated Design Upload Pipeline
+ * AudacityTees — Automated Design Upload Pipeline (Etsy Edition)
  *
  * Takes a PNG file, uploads to Printify, creates product with variants,
- * and saves to Supabase. Full automation from file drop to live on store.
+ * saves to Supabase, and publishes to Etsy via Printify integration.
  *
  * File naming convention:
  *   CATEGORY__slug-name__colors.png
- *   funny__coffee-before-talkie__white,heather.png
- *   gaming__natural-20-critical-hit__black,navy.png
+ *   unhinged__i-have-opinions-and-time__black,navy.png
+ *   dark-humor__burnt-out-but-optimistic__black,forest.png
  *
  * Usage: node scripts/upload-design.js /path/to/design.png
  */
@@ -54,8 +54,9 @@ const VARIANT_MAP = {
 };
 
 const SIZES = ["S", "M", "L", "XL", "2XL", "3XL"];
-const PRICE_STANDARD = 2499; // $24.99 in cents
-const PRICE_PLUS = 2799;     // $27.99 for 2XL/3XL
+// Etsy pricing: accounts for 6.5% transaction + $0.20 listing + 3% + $0.25 payment processing
+const PRICE_STANDARD = 2799; // $27.99 in cents
+const PRICE_PLUS = 3199;     // $31.99 for 2XL/3XL
 
 // --- Helpers ---
 
@@ -164,62 +165,85 @@ async function upscaleIfNeeded(filepath) {
 // --- SEO Content Generator ---
 
 const CATEGORY_KEYWORDS = {
-  funny: ["funny", "humor", "hilarious", "sarcastic", "witty", "comedy"],
-  motivational: ["motivational", "inspirational", "positive", "empowering", "uplifting"],
-  vintage: ["vintage", "retro", "throwback", "nostalgic", "classic", "old school"],
-  gaming: ["gaming", "gamer", "video game", "retro gaming", "nerd", "geek"],
-  sports: ["sports", "athletic", "fitness", "workout", "gym"],
-  music: ["music", "band", "rock", "concert", "musician"],
-  "dad-jokes": ["dad", "father", "dad joke", "dad humor", "papa", "daddy"],
-  coding: ["coding", "programmer", "developer", "software engineer", "tech", "code"],
-  animals: ["animal", "pet", "cute", "wildlife", "animal lover"],
-  trending: ["trending", "viral", "popular", "hot", "must-have"],
+  unhinged: ["funny shirt", "unhinged shirt", "chaotic energy", "sarcastic tee", "bold statement shirt"],
+  "dark-humor": ["dark humor shirt", "mental health shirt", "funny anxiety tee", "sarcastic gift", "dark comedy shirt"],
+  "work-satire": ["funny coworker gift", "office humor shirt", "corporate satire tee", "work from home shirt", "anti corporate shirt"],
+  introvert: ["introvert shirt", "antisocial shirt", "selectively social tee", "introvert gift", "funny introvert shirt"],
+  parenting: ["funny mom shirt", "funny dad shirt", "parenting humor tee", "sarcastic mom gift", "tired parent shirt"],
+  "social-commentary": ["thought provoking shirt", "opinion shirt", "bold statement tee", "controversial shirt", "normalize shirt"],
+  "gen-z": ["gen z shirt", "internet culture tee", "main character energy", "chronically online shirt", "y2k aesthetic tee"],
+  kids: ["funny kids shirt", "sarcastic kids tee", "kids attitude shirt", "funny toddler shirt", "youth graphic tee"],
+  baby: ["funny baby onesie", "sarcastic baby bodysuit", "funny newborn gift", "baby shower gift", "audacity baby shirt"],
+  occupation: ["funny nurse shirt", "funny teacher gift", "electrician humor tee", "occupation humor shirt", "trades humor shirt"],
+  // Legacy categories still supported
+  funny: ["funny shirt", "humor tee", "hilarious shirt", "sarcastic gift", "witty shirt"],
+  motivational: ["motivational shirt", "inspirational tee", "positive vibes shirt", "empowering gift"],
+  vintage: ["vintage graphic tee", "retro shirt", "throwback tee", "nostalgic shirt"],
+  gaming: ["funny gamer shirt", "gaming tee", "video game shirt", "nerd gift", "geek shirt"],
+  trending: ["trending shirt", "viral tee", "popular shirt", "must have shirt"],
 };
 
 function generateSeoContent(title, category, colors) {
   const humanTitle = title.replace(" Tee", "");
-  const keywords = CATEGORY_KEYWORDS[category] || [category];
+  const keywords = CATEGORY_KEYWORDS[category] || [category + " shirt"];
   const colorList = colors.map((c) => c.charAt(0).toUpperCase() + c.slice(1)).join(", ");
-  const primaryKeyword = keywords[0];
-  const secondaryKeyword = keywords[1] || keywords[0];
 
-  // SEO-optimized title — includes primary keyword + product type
-  const seoTitle = `${humanTitle} T-Shirt | ${primaryKeyword.charAt(0).toUpperCase() + primaryKeyword.slice(1)} Graphic Tee`;
+  // Determine audience from category
+  const isKids = category === "kids";
+  const isBaby = category === "baby";
+  const audienceLabel = isBaby ? "Baby Bodysuit" : isKids ? "Youth Shirt" : "Shirt";
+  const giftLabel = isBaby ? "Baby Shower Gift" : isKids ? "Gift for Kids" : "Gift for Him Her";
+  const fitLabel = isBaby ? "Baby bodysuit" : isKids ? "Youth unisex fit" : "Unisex adult fit";
 
-  // Rich description for both our store and eBay
+  // Etsy-optimized title — front-load the phrase, max 140 chars
+  // Format: [Phrase] Shirt, Funny [Niche] Gift, Sarcastic Tee, Gift for Him Her
+  const seoTitle = `${humanTitle} ${audienceLabel}, ${keywords[0].split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}, Sarcastic ${audienceLabel}, ${giftLabel}`.slice(0, 140);
+
+  // Etsy description — optimized for search + conversion
   const seoDescription = [
-    `${humanTitle} — the perfect ${primaryKeyword} graphic tee for anyone who gets it.`,
+    `${humanTitle} — for people who say what they think and wear what they mean.`,
     ``,
-    `This ${secondaryKeyword} design is printed on a premium Bella+Canvas 3001 unisex jersey t-shirt — the gold standard for comfort and durability.`,
+    isBaby
+      ? `This sarcastic baby bodysuit is the perfect way to announce that your tiny human already has a personality. Soft, comfortable, and printed with care.`
+      : isKids
+      ? `This funny kids shirt is for the little one who already has more attitude than most adults. Premium quality, comfortable fit, built to survive recess.`
+      : `This bold graphic tee is printed on a premium Bella+Canvas 3001 unisex jersey — the gold standard for comfort and durability.`,
     ``,
-    `WHY YOU'LL LOVE IT:`,
-    `• Soft, lightweight 100% combed ring-spun cotton`,
-    `• Retail fit with crew neckline`,
-    `• Side-seamed for a modern, tailored look`,
-    `• Durable ribbed collar that holds its shape`,
-    `• Pre-shrunk to maintain size wash after wash`,
+    `DETAILS:`,
+    isBaby
+      ? `\u2022 Soft 100% combed ring-spun cotton\n\u2022 3-snap closure for easy changes\n\u2022 Reinforced binding at neck and shoulders\n\u2022 Lay flat collar`
+      : `\u2022 Soft, lightweight 100% combed ring-spun cotton\n\u2022 ${fitLabel} with crew neckline\n\u2022 Side-seamed for a modern, tailored look\n\u2022 Pre-shrunk to maintain size wash after wash`,
     ``,
-    `SIZING: Available in S, M, L, XL, 2XL, 3XL — unisex fit works for everyone`,
-    `COLOR: ${colorList}`,
+    `SIZING: ${isBaby ? "NB, 6M, 12M, 18M, 24M" : isKids ? "XS, S, M, L, XL" : "S, M, L, XL, 2XL, 3XL"}`,
+    `COLORS: ${colorList}`,
     ``,
-    `Perfect as a gift for ${primaryKeyword} fans or treat yourself to a tee that actually means something.`,
+    `PERFECT GIFT FOR:`,
+    isBaby
+      ? `\u2022 Baby showers that need a laugh\n\u2022 New parents with a sense of humor\n\u2022 Gender reveal parties\n\u2022 First birthday gifts`
+      : isKids
+      ? `\u2022 Kids who already have opinions\n\u2022 Birthday gifts with personality\n\u2022 Back-to-school with attitude\n\u2022 Matching family shirt sets`
+      : `\u2022 People who say what everyone else is thinking\n\u2022 Sarcastic friends and coworkers\n\u2022 Birthday, holiday, and just-because gifts\n\u2022 Anyone who values honesty over politeness`,
     ``,
-    `Printed with care using DTG (direct-to-garment) technology for vibrant, long-lasting color that won't crack or fade.`,
+    `Printed with DTG (direct-to-garment) technology for vibrant color that won't crack or fade.`,
     ``,
-    `Ships within 3-5 business days. Free shipping on orders over $35.`,
+    `Ships within 3-5 business days from the USA.`,
+    ``,
+    `Wear the audacity.`,
   ].join("\n");
 
-  // Tags for Printify + eBay discoverability
+  // Etsy tags — 13 multi-word phrase tags for maximum discoverability
+  const phraseWords = humanTitle.toLowerCase().split(" ").slice(0, 4).join(" ");
   const seoTags = [
-    ...keywords.slice(0, 4),
-    "graphic tee",
-    "t-shirt",
-    "unisex",
-    "gift",
-    humanTitle.toLowerCase().split(" ").slice(0, 3).join(" "),
-    `${primaryKeyword} shirt`,
-    `${primaryKeyword} gift`,
-  ].slice(0, 13); // Printify/eBay tag limits
+    ...keywords.slice(0, 5),               // 5 category-specific tags
+    `${audienceLabel.toLowerCase()}s with sayings`,  // "shirts with sayings"
+    `funny ${giftLabel.toLowerCase()}`,     // gift intent
+    phraseWords,                            // phrase snippet as tag
+    isBaby ? "new baby gift" : isKids ? "funny youth shirt" : "graphic tee for adults",
+    isBaby ? "sarcastic onesie" : isKids ? "kids graphic tee" : "bold statement shirt",
+    "audacity tees",                        // brand tag
+    isBaby ? "funny baby clothes" : isKids ? "attitude kids shirt" : "thought provoking shirt",
+    isBaby ? "baby announcement" : isKids ? "sassy kids tee" : "controversial shirt",
+  ].slice(0, 13);
 
   return { seoTitle, seoDescription, seoTags };
 }
@@ -238,7 +262,7 @@ async function uploadToPrintify(filepath) {
       headers: {
         Authorization: `Bearer ${PRINTIFY_TOKEN}`,
         "Content-Type": "application/json",
-        "User-Agent": "ShirtyNation/1.0",
+        "User-Agent": "AudacityTees/1.0",
       },
     },
     JSON.stringify({ file_name: path.basename(filepath), contents: b64 })
@@ -277,7 +301,7 @@ async function createPrintifyProduct(imageId, title, colors, seoTitle, seoDescri
       headers: {
         Authorization: `Bearer ${PRINTIFY_TOKEN}`,
         "Content-Type": "application/json",
-        "User-Agent": "ShirtyNation/1.0",
+        "User-Agent": "AudacityTees/1.0",
       },
     },
     JSON.stringify({
@@ -411,7 +435,7 @@ async function main() {
     // Generate SEO content
     const { seoTitle, seoDescription, seoTags } = generateSeoContent(title, category, colors);
 
-    console.log(`\n🔥 ShirtyNation Pipeline`);
+    console.log(`\n🔥 AudacityTees Pipeline`);
     console.log(`  📋 Title: ${seoTitle}`);
     console.log(`  🏷️  Category: ${category}`);
     console.log(`  🎨 Colors: ${colors.join(", ")}`);
@@ -427,8 +451,8 @@ async function main() {
     // Step 3: Save to Supabase with SEO content
     await saveToSupabase(slug, title, category, colors, PRICE_STANDARD / 100, mockups, productId, upload.preview_url, seoTitle, seoDescription, seoTags);
 
-    // Step 4: Publish to eBay via Printify
-    console.log("  🛍️  Publishing to eBay...");
+    // Step 4: Publish to Etsy via Printify
+    console.log("  🛍️  Publishing to Etsy...");
     try {
       await apiRequest(
         `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products/${productId}/publish.json`,
@@ -437,14 +461,14 @@ async function main() {
           headers: {
             Authorization: `Bearer ${PRINTIFY_TOKEN}`,
             "Content-Type": "application/json",
-            "User-Agent": "ShirtyNation/1.0",
+            "User-Agent": "AudacityTees/1.0",
           },
         },
         JSON.stringify({ title: true, description: true, images: true, variants: true, tags: true, keyFeatures: true, shipping_template: true })
       );
-      console.log("  ✅ Published to eBay");
-    } catch (ebayErr) {
-      console.log(`  ⚠️  eBay publish failed (non-blocking): ${ebayErr.message.slice(0, 100)}`);
+      console.log("  ✅ Published to Etsy");
+    } catch (etsyErr) {
+      console.log(`  ⚠️  Etsy publish failed (non-blocking): ${etsyErr.message.slice(0, 100)}`);
     }
 
     // Step 5: Move to processed
@@ -461,8 +485,8 @@ async function main() {
       });
     }
 
-    console.log(`\n🎉 LIVE on ShirtyNation!`);
-    console.log(`   https://shirtynation.vercel.app/shop/${slug}-tee`);
+    console.log(`\n🎉 LIVE on AudacityTees!`);
+    console.log(`   https://www.etsy.com/shop/AudacityTees`);
     console.log("");
   } catch (err) {
     console.error(`\n❌ Pipeline failed: ${err.message}`);
